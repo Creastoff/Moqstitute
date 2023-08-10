@@ -19,7 +19,7 @@ jobs:
         dotnet-version: 6.0.x
     - name: Publish
       run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --output "${{ env.PUBLISH_PATH }}"
-    - name: Create A Release
+    - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
         files: moqstitute.zip
