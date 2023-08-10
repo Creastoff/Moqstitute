@@ -21,8 +21,9 @@ jobs:
       run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
     - name: Publish
       run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --output "${{ env.PUBLISH_PATH }}"
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v1.0.0
+    - name: Release with Notes
+      uses: softprops/action-gh-release@v1
       with:
-        name: webapp
-        path: ${{ env.PUBLISH_PATH }}
+        files: moqstitute.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
