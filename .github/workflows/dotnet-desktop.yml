@@ -17,10 +17,8 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
-    - name: Restore
-      run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
     - name: Publish
-      run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --output "${{ env.PUBLISH_PATH }}"
+      run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --output "${{ env.PUBLISH_PATH }}" --no-restore
     - name: Release with Notes
       uses: softprops/action-gh-release@v1
       with:
