@@ -36,3 +36,5 @@ $1
 $3
 \.Returns\(\(\)\s=>\s
 .Returns(
+Mock.Of
+Substitute.For
