@@ -1,16 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Data.Common;
-using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
-using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
-using static System.Console;
-using Microsoft.CodeAnalysis.Operations;
-using System.Text.RegularExpressions;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.IO;
+﻿using System.Text.RegularExpressions;
 
 namespace Moqstitute
 {
@@ -30,10 +18,18 @@ namespace Moqstitute
 
         static void Main(string[] args)
         {
-            var configFile = @".\config.txt";
-            var fileContents = File.ReadAllLines(configFile).ToList();
+            for (int i = 0; i < args.Length; i++)
+            {
+                Console.WriteLine($"arg{i}: {args[i]}");
+            }
+
+            Console.WriteLine("Reading configuration file ...");
 
             var findReplaceItems = new List<FindReplace>();
+            var configFile = "config.txt";
+            var fileContents = File.ReadAllLines(configFile).ToList();
+
+            Console.WriteLine("Making replace list ...");
 
             for (int i = 0; i < fileContents.Count; i += 2)
             {
@@ -41,19 +37,42 @@ namespace Moqstitute
                 findReplaceItems.Add(new FindReplace(fileContents[i], replace));
             }
             
+            Console.WriteLine("Getting *.cs files ...");
+
             var baseDir = args[0];
-            var files = Directory.EnumerateFiles(baseDir, "*.cs", SearchOption.AllDirectories);
+            var fileNames = Directory.EnumerateFiles(baseDir, "*.cs", SearchOption.AllDirectories);
             
-            foreach (var file in files)
+            Console.WriteLine($"Discovered: {fileNames.Count()} files");
+
+            foreach (var fileName in fileNames)
             {
-                var csFile = File.ReadAllText(file);
+                // Skip generated files
+                if (fileName.EndsWith(".g.cs") || fileName.EndsWith("AssemblyAttributes.cs"))
+                {
+                    continue;
+                }
+
+                var csFile = File.ReadAllText(fileName);
+
+                if (!csFile.Contains("Mock"))
+                {
+                    continue;
+                }
+
+                var csFileOriginalSize = csFile.Length;
 
                 foreach (var findReplace in findReplaceItems)
                 {
                     csFile = Regex.Replace(csFile, findReplace.Find, findReplace.Replace);
                 }
 
-                File.WriteAllText(file, csFile);
+                if (csFile.Length != csFileOriginalSize)
+                {
+                    Console.WriteLine($"Replacing Moq in: {fileName}");
+                    File.WriteAllText(fileName, csFile);
+                }
+
+                Console.WriteLine($"Finished with: {fileName}");
             }
         }
     }
