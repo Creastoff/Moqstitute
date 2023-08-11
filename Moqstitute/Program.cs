@@ -71,8 +71,6 @@ namespace Moqstitute
                     Console.WriteLine($"Replacing Moq in: {fileName}");
                     File.WriteAllText(fileName, csFile);
                 }
-
-                Console.WriteLine($"Finished with: {fileName}");
             }
         }
     }
