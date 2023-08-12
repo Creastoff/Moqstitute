@@ -30,5 +30,11 @@ using Ninject.MockingKernel.Moq;
 using Ninject.MockingKernel.NSubstitute;
 \.GetMock<(.+?)>\(\)
 .Get<(.+?)>()
-\.Object
-blank
+\.Object([\.,;)\s])
+$1
+\.Setup(Get)?\((\w+) => \2(\.?.+?)\)
+$3
+\.Returns\(\(\)\s=>\s
+.Returns(
+Mock.Of
+Substitute.For
